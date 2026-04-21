@@ -1,0 +1,94 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "FheTableScan",
+      "sql": "SELECT l_returnflag, l_linestatus, l_quantity, l_extendedprice, l_discount, l_shipdate, l_extendedprice * (1 - l_discount) as disc_price, l_extendedprice * (1 - l_discount) * (1 + l_tax) as charge FROM lineitem ORDER BY (1), (2)",
+      "groupByOrdinals": [0, 1],
+      "collation": [
+        {"field": 0, "direction": "ASCENDING"},
+        {"field": 1, "direction": "ASCENDING"}
+      ]
+    },
+    {
+      "id": "1",
+      "relOp": "FheFilter",
+      "predicate": {
+        "type": "less_equal",
+        "column": "l_shipdate",
+        "threshold": "",
+        "radixBase": 4,
+        "numDigits": 6
+      },
+      "inputs": ["0"]
+    },
+    {
+      "id": "2",
+      "relOp": "FheAggregate",
+      "groupBy": [0, 1],
+      "aggregates": [
+        {"type": "SUM", "ordinal": 2, "alias": "sum_qty"},
+        {"type": "SUM", "ordinal": 3, "alias": "sum_base_price"},
+        {"type": "SUM", "ordinal": 6, "alias": "sum_disc_price"},
+        {"type": "SUM", "ordinal": 7, "alias": "sum_charge"},
+        {"type": "SUM", "ordinal": 4, "alias": "sum_discount"},
+        {"type": "COUNT", "alias": "count_order"}
+      ],
+      "inputs": ["1"]
+    },
+    {
+      "id": "3",
+      "relOp": "SecureContextSwitch",
+      "inputs": ["2"],
+      "mpc_port": 8777,
+      "charlie_host": "127.0.0.1"
+    },
+    {
+      "id": "4",
+      "relOp": "LogicalProject",
+      "fields": [
+        "l_returnflag",
+        "l_linestatus",
+        "sum_qty",
+        "sum_base_price",
+        "sum_disc_price",
+        "sum_charge",
+        "avg_qty",
+        "avg_price",
+        "avg_disc",
+        "count_order"
+      ],
+      "exprs": [
+        { "input": 0, "name": "$0" },
+        { "input": 1, "name": "$1" },
+        { "input": 2, "name": "$2" },
+        { "input": 3, "name": "$3" },
+        { "input": 4, "name": "$4" },
+        { "input": 5, "name": "$5" },
+        {
+          "op": { "name": "/", "kind": "DIVIDE", "syntax": "BINARY" },
+          "operands": [
+            { "input": 2, "name": "$2" },
+            { "input": 7, "name": "$7" }
+          ]
+        },
+        {
+          "op": { "name": "/", "kind": "DIVIDE", "syntax": "BINARY" },
+          "operands": [
+            { "input": 3, "name": "$3" },
+            { "input": 7, "name": "$7" }
+          ]
+        },
+        {
+          "op": { "name": "/", "kind": "DIVIDE", "syntax": "BINARY" },
+          "operands": [
+            { "input": 6, "name": "$6" },
+            { "input": 7, "name": "$7" }
+          ]
+        },
+        { "input": 7, "name": "$7" }
+      ],
+      "inputs": ["3"]
+    }
+  ]
+}

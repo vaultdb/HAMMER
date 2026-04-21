@@ -1,0 +1,57 @@
+{
+    "rels": [
+      {
+        "id": "0",
+        "relOp": "FheTableScan",
+        "sql": "SELECT 1 as g, l.l_extendedprice * (1 - l.l_discount) AS revenue, p.p_partkey, p.p_brand, p.p_container, l.l_quantity, p.p_size, l.l_shipmode, l.l_shipinstruct FROM lineitem l JOIN part p ON l.l_partkey = p.p_partkey ORDER BY g",
+        "groupByOrdinals": [0],
+        "collation": [{"field": 0, "direction": "ASCENDING"}]
+      },
+      {
+        "id": "1",
+        "relOp": "FheFilter",
+        "predicates": [
+          {"type": "equal", "column": "l_shipinstruct", "threshold": "", "radixBase": 4, "numDigits": 1},
+          {"type": "in", "column": "l_shipmode", "thresholds": ["", ""], "radixBase": 4, "numDigits": 2},
+          {"type": "greater_equal", "column": "p_size", "threshold": "", "radixBase": 4, "numDigits": 3}
+        ],
+        "orPredicateGroups": [
+          {
+            "predicates": [
+              {"type": "equal", "column": "p_brand", "threshold": "", "wireKey": "p_brand_0", "radixBase": 4, "numDigits": 3},
+              {"type": "in", "column": "p_container", "wireKey": "p_container_0", "thresholds": ["", "", "", ""], "radixBase": 4, "numDigits": 3},
+              {"type": "greater_equal", "column": "l_quantity", "threshold": "", "wireKey": "l_quantity_0_greater_equal", "radixBase": 4, "numDigits": 3},
+              {"type": "less_equal", "column": "l_quantity", "threshold": "", "wireKey": "l_quantity_0_less_equal", "radixBase": 4, "numDigits": 3},
+              {"type": "less_equal", "column": "p_size", "threshold": "", "wireKey": "p_size_0_less_equal", "radixBase": 4, "numDigits": 3}
+            ]
+          },
+          {
+            "predicates": [
+              {"type": "equal", "column": "p_brand", "threshold": "", "wireKey": "p_brand_1", "radixBase": 4, "numDigits": 3},
+              {"type": "in", "column": "p_container", "wireKey": "p_container_1", "thresholds": ["", "", "", ""], "radixBase": 4, "numDigits": 3},
+              {"type": "greater_equal", "column": "l_quantity", "threshold": "", "wireKey": "l_quantity_1_greater_equal", "radixBase": 4, "numDigits": 3},
+              {"type": "less_equal", "column": "l_quantity", "threshold": "", "wireKey": "l_quantity_1_less_equal", "radixBase": 4, "numDigits": 3},
+              {"type": "less_equal", "column": "p_size", "threshold": "", "wireKey": "p_size_1_less_equal", "radixBase": 4, "numDigits": 3}
+            ]
+          },
+          {
+            "predicates": [
+              {"type": "equal", "column": "p_brand", "threshold": "", "wireKey": "p_brand_2", "radixBase": 4, "numDigits": 3},
+              {"type": "in", "column": "p_container", "wireKey": "p_container_2", "thresholds": ["", "", "", ""], "radixBase": 4, "numDigits": 3},
+              {"type": "greater_equal", "column": "l_quantity", "threshold": "", "wireKey": "l_quantity_2_greater_equal", "radixBase": 4, "numDigits": 3},
+              {"type": "less_equal", "column": "l_quantity", "threshold": "", "wireKey": "l_quantity_2_less_equal", "radixBase": 4, "numDigits": 3},
+              {"type": "less_equal", "column": "p_size", "threshold": "", "wireKey": "p_size_2_less_equal", "radixBase": 4, "numDigits": 3}
+            ]
+          }
+        ],
+        "inputs": ["0"]
+      },
+      {
+        "id": "2",
+        "relOp": "FheAggregate",
+        "groupBy": [0],
+        "aggregates": [{"type": "SUM", "ordinal": 1, "alias": "revenue"}],
+        "inputs": ["1"]
+      }
+    ]
+  }

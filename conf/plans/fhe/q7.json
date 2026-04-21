@@ -1,0 +1,75 @@
+{
+    "rels": [
+      {
+        "id": "0",
+        "relOp": "FheTableScan",
+        "sql": "SELECT n1.n_name as n1_name, n2.n_name as n2_name, EXTRACT(YEAR FROM l.l_shipdate)::INT as l_year, l.l_extendedprice * (1 - l.l_discount) AS revenue, l.l_shipdate FROM supplier s JOIN lineitem l ON s.s_suppkey = l.l_suppkey JOIN orders o ON l.l_orderkey = o.o_orderkey JOIN customer c ON o.o_custkey = c.c_custkey JOIN nation n1 ON s.s_nationkey = n1.n_nationkey JOIN nation n2 ON c.c_nationkey = n2.n_nationkey ORDER BY n1_name, n2_name, l_year",
+        "groupByOrdinals": [
+          0,
+          1,
+          2
+        ],
+        "collation": [
+          { "field": 0, "direction": "ASCENDING" },
+          { "field": 1, "direction": "ASCENDING" },
+          { "field": 2, "direction": "ASCENDING" }
+        ]
+      },
+      {
+        "id": "1",
+        "relOp": "FheFilter",
+        "predicates": [
+          {
+            "type": "equal",
+            "column": "n1_name",
+            "threshold": "",
+            "radixBase": 5,
+            "numDigits": 2
+          },
+          {
+            "type": "equal",
+            "column": "n2_name",
+            "threshold": "",
+            "radixBase": 5,
+            "numDigits": 2
+          },
+          {
+            "type": "greater_equal",
+            "column": "l_shipdate",
+            "threshold": "",
+            "radixBase": 4,
+            "numDigits": 6
+          },
+          {
+            "type": "less_than",
+            "column": "l_shipdate",
+            "threshold": "",
+            "radixBase": 4,
+            "numDigits": 6
+          }
+        ],
+        "inputs": [
+          "0"
+        ]
+      },
+      {
+        "id": "2",
+        "relOp": "FheAggregate",
+        "groupBy": [
+          0,
+          1,
+          2
+        ],
+        "aggregates": [
+          {
+            "type": "SUM",
+            "ordinal": 3,
+            "alias": "revenue"
+          }
+        ],
+        "inputs": [
+          "1"
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,73 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "LogicalValues",
+      "outputFields": "n_name (#0), r_name (#1), revenue (#2), o_orderdate (#3)",
+      "type": [
+        {"type": "CHAR", "precision": 25, "name": "n_name"},
+        {"type": "CHAR", "precision": 25, "name": "r_name"},
+        {"type": "DECIMAL", "name": "revenue"},
+        {"type": "LONG", "nullable": false, "name": "o_orderdate"}
+      ],
+      "sql": "SELECT n_name, r.r_name, l.l_extendedprice * (1 - l.l_discount) AS revenue, o_orderdate FROM customer c JOIN orders o ON c.c_custkey = o.o_custkey JOIN lineitem l ON l.l_orderkey = o.o_orderkey JOIN supplier s ON l.l_suppkey = s.s_suppkey JOIN nation n ON s.s_nationkey = n.n_nationkey JOIN region r ON n.n_regionkey = r.r_regionkey WHERE c.c_nationkey = s.s_nationkey ORDER BY n_name",
+      "collation": [
+        {"field": 0, "direction": "ASCENDING"}
+      ],
+      "tuples": [],
+      "inputs": []
+    },
+    {
+      "id": "1",
+      "relOp": "LogicalFilter",
+      "condition": {
+        "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+        "operands": [
+          {
+            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+            "operands": [
+              {
+                "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                "operands": [
+                  {"input": 1, "name": "$1"},
+                  {"literal": "EUROPE", "type": {"type": "CHAR", "precision": 25, "nullable": false}}
+                ]
+              },
+              {
+                "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                "operands": [
+                  {"input": 3, "name": "$3"},
+                  {"literal": 725846400, "type": {"type": "LONG", "nullable": false}}
+                ]
+              }
+            ]
+          },
+          {
+            "op": {"name": "<", "kind": "LESS_THAN", "syntax": "BINARY"},
+            "operands": [
+              {"input": 3, "name": "$3"},
+              {"literal": 757382400, "type": {"type": "LONG", "nullable": false}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "relOp": "LogicalAggregate",
+      "operator-algorithm": "sort-merge-aggregate",
+      "cardBound": 25,
+      "group": [0],
+      "effective-collation": [
+        {"field": 0, "direction": "ASCENDING", "nulls": "FIRST"}
+      ],
+      "aggs": [
+        {
+          "agg": {"name": "SUM", "kind": "SUM", "syntax": "FUNCTION"},
+          "type": {"type": "DECIMAL", "nullable": true, "precision": 19, "scale": 0},
+          "distinct": false, "operands": [2], "name": "revenue"
+        }
+      ]
+    }
+  ]
+}

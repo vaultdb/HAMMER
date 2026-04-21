@@ -1,0 +1,380 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "LogicalValues",
+      "outputFields": "g (#0), revenue (#1), p_partkey (#2), p_brand (#3), p_container (#4), l_quantity (#5), p_size (#6), l_shipmode (#7), l_shipinstruct (#8)",
+      "type": [
+        {"type": "INTEGER", "nullable": false, "name": "g"},
+        {"type": "DECIMAL", "name": "revenue"},
+        {"type": "INTEGER", "name": "p_partkey"},
+        {"type": "CHAR", "precision": 10, "name": "p_brand"},
+        {"type": "CHAR", "precision": 10, "name": "p_container"},
+        {"type": "DECIMAL", "name": "l_quantity"},
+        {"type": "INTEGER", "name": "p_size"},
+        {"type": "CHAR", "precision": 10, "name": "l_shipmode"},
+        {"type": "CHAR", "precision": 25, "name": "l_shipinstruct"}
+      ],
+      "sql": "SELECT 1 as g, l.l_extendedprice * (1 - l.l_discount) AS revenue, p.p_partkey, p.p_brand, p.p_container, l.l_quantity, p.p_size, l.l_shipmode, l.l_shipinstruct FROM lineitem l JOIN part p ON l.l_partkey = p.p_partkey ORDER BY g",
+      "collation": [
+        {"field": 0, "direction": "ASCENDING"}
+      ],
+      "tuples": [],
+      "inputs": []
+    },
+    {
+      "id": "1",
+      "relOp": "LogicalFilter",
+      "condition": {
+        "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+        "operands": [
+          {
+            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+            "operands": [
+              {
+                "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                "operands": [
+                  {
+                    "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                    "operands": [
+                      {"input": 8, "name": "$8"},
+                      {"literal": "DELIVER IN PERSON", "type": {"type": "CHAR", "precision": 25, "nullable": false}}
+                    ]
+                  },
+                  {
+                    "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                    "operands": [
+                      {
+                        "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                        "operands": [
+                          {"input": 7, "name": "$7"},
+                          {"literal": "AIR", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                        ]
+                      },
+                      {
+                        "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                        "operands": [
+                          {"input": 7, "name": "$7"},
+                          {"literal": "AIR REG", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                "operands": [
+                  {"input": 6, "name": "$6"},
+                  {"literal": 1, "type": {"type": "INTEGER", "nullable": false}}
+                ]
+              }
+            ]
+          },
+          {
+            "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+            "operands": [
+              {
+                "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                "operands": [
+                  {
+                    "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                    "operands": [
+                      {
+                        "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                        "operands": [
+                          {
+                            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                            "operands": [
+                              {
+                                "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                                "operands": [
+                                  {
+                                    "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                    "operands": [
+                                      {"input": 3, "name": "$3"},
+                                      {"literal": "Brand#41", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                    ]
+                                  },
+                                  {
+                                    "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                    "operands": [
+                                      {
+                                        "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                        "operands": [
+                                          {
+                                            "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                            "operands": [
+                                              {
+                                                "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                                "operands": [
+                                                  {"input": 4, "name": "$4"},
+                                                  {"literal": "SM CASE", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                                ]
+                                              },
+                                              {
+                                                "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                                "operands": [
+                                                  {"input": 4, "name": "$4"},
+                                                  {"literal": "SM BOX", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                            "operands": [
+                                              {"input": 4, "name": "$4"},
+                                              {"literal": "SM PACK", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                        "operands": [
+                                          {"input": 4, "name": "$4"},
+                                          {"literal": "SM PKG", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                                "operands": [
+                                  {"input": 5, "name": "$5"},
+                                  {"literal": 2, "type": {"type": "FLOAT", "nullable": false}}
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": {"name": "<=", "kind": "LESS_THAN_OR_EQUAL", "syntax": "BINARY"},
+                            "operands": [
+                              {"input": 5, "name": "$5"},
+                              {"literal": 12, "type": {"type": "FLOAT", "nullable": false}}
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": {"name": "<=", "kind": "LESS_THAN_OR_EQUAL", "syntax": "BINARY"},
+                        "operands": [
+                          {"input": 6, "name": "$6"},
+                          {"literal": 5, "type": {"type": "INTEGER", "nullable": false}}
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                    "operands": [
+                      {
+                        "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                        "operands": [
+                          {
+                            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                            "operands": [
+                              {
+                                "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                                "operands": [
+                                  {
+                                    "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                    "operands": [
+                                      {"input": 3, "name": "$3"},
+                                      {"literal": "Brand#13", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                    ]
+                                  },
+                                  {
+                                    "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                    "operands": [
+                                      {
+                                        "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                        "operands": [
+                                          {
+                                            "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                            "operands": [
+                                              {
+                                                "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                                "operands": [
+                                                  {"input": 4, "name": "$4"},
+                                                  {"literal": "MED BAG", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                                ]
+                                              },
+                                              {
+                                                "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                                "operands": [
+                                                  {"input": 4, "name": "$4"},
+                                                  {"literal": "MED BOX", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                            "operands": [
+                                              {"input": 4, "name": "$4"},
+                                              {"literal": "MED PKG", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                        "operands": [
+                                          {"input": 4, "name": "$4"},
+                                          {"literal": "MED PACK", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                                "operands": [
+                                  {"input": 5, "name": "$5"},
+                                  {"literal": 14, "type": {"type": "FLOAT", "nullable": false}}
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": {"name": "<=", "kind": "LESS_THAN_OR_EQUAL", "syntax": "BINARY"},
+                            "operands": [
+                              {"input": 5, "name": "$5"},
+                              {"literal": 24, "type": {"type": "FLOAT", "nullable": false}}
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": {"name": "<=", "kind": "LESS_THAN_OR_EQUAL", "syntax": "BINARY"},
+                        "operands": [
+                          {"input": 6, "name": "$6"},
+                          {"literal": 10, "type": {"type": "INTEGER", "nullable": false}}
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                "operands": [
+                  {
+                    "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                    "operands": [
+                      {
+                        "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                        "operands": [
+                          {
+                            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                            "operands": [
+                              {
+                                "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                "operands": [
+                                  {"input": 3, "name": "$3"},
+                                  {"literal": "Brand#55", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                ]
+                              },
+                              {
+                                "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                "operands": [
+                                  {
+                                    "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                    "operands": [
+                                      {
+                                        "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                                        "operands": [
+                                          {
+                                            "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                            "operands": [
+                                              {"input": 4, "name": "$4"},
+                                              {"literal": "LG CASE", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                            ]
+                                          },
+                                          {
+                                            "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                            "operands": [
+                                              {"input": 4, "name": "$4"},
+                                              {"literal": "LG BOX", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                        "operands": [
+                                          {"input": 4, "name": "$4"},
+                                          {"literal": "LG PACK", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                                    "operands": [
+                                      {"input": 4, "name": "$4"},
+                                      {"literal": "LG PKG", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                            "operands": [
+                              {"input": 5, "name": "$5"},
+                              {"literal": 23, "type": {"type": "FLOAT", "nullable": false}}
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "op": {"name": "<=", "kind": "LESS_THAN_OR_EQUAL", "syntax": "BINARY"},
+                        "operands": [
+                          {"input": 5, "name": "$5"},
+                          {"literal": 33, "type": {"type": "FLOAT", "nullable": false}}
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "op": {"name": "<=", "kind": "LESS_THAN_OR_EQUAL", "syntax": "BINARY"},
+                    "operands": [
+                      {"input": 6, "name": "$6"},
+                      {"literal": 15, "type": {"type": "INTEGER", "nullable": false}}
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "relOp": "LogicalAggregate",
+      "operator-algorithm": "sort-merge-aggregate",
+      "cardBound" : 1,
+      "group": [0],
+      "effective-collation": [
+        {"field": 0, "direction": "ASCENDING", "nulls": "FIRST"}
+      ],
+      "aggs": [
+        {
+          "agg": {"name": "SUM", "kind": "SUM", "syntax": "FUNCTION"},
+          "type": {"type": "DECIMAL", "nullable": true, "precision": 19, "scale": 0},
+          "distinct": false,
+          "operands": [1],
+          "name": "revenue"
+        }
+      ]
+    }
+  ]
+}

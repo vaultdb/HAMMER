@@ -1,0 +1,31 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "FheTableScan",
+      "sql": "SELECT l.l_shipmode, l.l_receiptdate, CASE WHEN o.o_orderpriority = '1-URGENT' OR o.o_orderpriority = '2-HIGH' THEN 1 ELSE 0 END AS high_line_count, CASE WHEN o.o_orderpriority <> '1-URGENT' AND o.o_orderpriority <> '2-HIGH' THEN 1 ELSE 0 END AS low_line_count FROM orders o, lineitem l WHERE o.o_orderkey = l.l_orderkey AND l.l_commitdate < l.l_receiptdate AND l.l_shipdate < l.l_commitdate ORDER BY l.l_shipmode",
+      "groupByOrdinals": [0],
+      "collation": [{"field": 0, "direction": "ASCENDING"}]
+    },
+    {
+      "id": "1",
+      "relOp": "FheFilter",
+      "predicates": [
+        {"type": "in", "column": "l_shipmode", "thresholds": ["", ""], "radixBase": 4, "numDigits": 2},
+        {"type": "greater_equal", "column": "l_receiptdate", "threshold": "", "radixBase": 4, "numDigits": 6},
+        {"type": "less_than", "column": "l_receiptdate", "threshold": "", "radixBase": 4, "numDigits": 6}
+      ],
+      "inputs": ["0"]
+    },
+    {
+      "id": "2",
+      "relOp": "FheAggregate",
+      "groupBy": [0],
+      "aggregates": [
+        {"type": "SUM", "ordinal": 2, "alias": "high_line_count"},
+        {"type": "SUM", "ordinal": 3, "alias": "low_line_count"}
+      ],
+      "inputs": ["1"]
+    }
+  ]
+}

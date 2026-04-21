@@ -1,0 +1,81 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "FheTableScan",
+      "sql": "SELECT l_orderkey, l_extendedprice * (1 - l_discount) as revenue, o_orderdate, o_shippriority, l_shipdate, c_mktsegment FROM customer, orders, lineitem WHERE c_custkey = o_custkey AND l_orderkey = o_orderkey ORDER BY l_orderkey, o_orderdate, o_shippriority",
+      "groupByOrdinals": [0, 2, 3],
+      "collation": []
+    },
+    {
+      "id": "1",
+      "relOp": "FheFilter",
+      "predicates": [
+        {"type": "equal", "column": "c_mktsegment", "threshold": "", "radixBase": 5, "numDigits": 1},
+        {"type": "less_than", "column": "o_orderdate", "threshold": "", "radixBase": 4, "numDigits": 6},
+        {"type": "greater_than", "column": "l_shipdate", "threshold": "", "radixBase": 4, "numDigits": 6}
+      ],
+      "inputs": ["0"]
+    },
+    {
+      "id": "2",
+      "relOp": "FheAggregate",
+      "groupBy": [0, 2, 3],
+      "aggregates": [
+        {"type": "SUM", "ordinal": 1, "alias": "revenue"}
+      ],
+      "inputs": ["1"]
+    },
+    {
+      "id": "3",
+      "relOp": "SecureContextSwitch",
+      "inputs": ["2"],
+      "mpc_port": 8777,
+      "charlie_host": "127.0.0.1"
+    },
+    {
+      "id": "4",
+      "relOp": "LogicalSort",
+      "collation": [
+        {"field": 3, "direction": "DESCENDING"},
+        {"field": 2, "direction": "ASCENDING"}
+      ],
+      "inputs": ["3"],
+      "fetch": {
+        "literal": 10,
+        "type": {
+          "type": "INTEGER",
+          "nullable": false
+        }
+      }
+    },
+    {
+      "id": "5",
+      "relOp": "LogicalProject",
+      "fields": [
+        "o_orderkey",
+        "revenue",
+        "o_orderdate",
+        "o_shippriority"
+      ],
+      "exprs": [
+        {
+          "input": 0,
+          "name": "$0"
+        },
+        {
+          "input": 3,
+          "name": "$3"
+        },
+        {
+          "input": 1,
+          "name": "$1"
+        },
+        {
+          "input": 2,
+          "name": "$2"
+        }
+      ]
+    }
+  ]
+}

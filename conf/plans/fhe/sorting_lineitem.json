@@ -1,0 +1,29 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "FheTableScan",
+      "sql": "SELECT l_orderkey, l_linenumber FROM lineitem",
+      "groupByOrdinals": [],
+      "collation": []
+    },
+    {
+      "id": "1",
+      "relOp": "SecureContextSwitch",
+      "inputs": ["0"],
+      "mpc_port": 8777,
+      "charlie_host": "127.0.0.1"
+    },
+    {
+      "id": "2",
+      "relOp": "LogicalSort",
+      "collation": [
+        {
+          "field": 0,
+          "direction": "ASCENDING"
+        }
+      ],
+      "inputs": ["1"]
+    }
+  ]
+}

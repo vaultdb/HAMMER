@@ -1,0 +1,70 @@
+# VaultDB-FHE base image — OpenFHE + EMP + libpqxx + build/runtime deps
+#
+# Build:  docker build -t dhsohn/vaultdb-fhe:latest -f src/main/cpp/docker/Dockerfile.base .
+# Push:   docker push dhsohn/vaultdb-fhe:latest
+#
+# This image is rebuilt only when dependencies change (OpenFHE, EMP, libpqxx).
+# VaultDB itself is built on top of this in Dockerfile.
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ---------- System packages (build + runtime) ----------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Build tools
+    build-essential cmake git wget python3 ca-certificates sudo \
+    # Dev libraries (needed at build time, headers used by VaultDB)
+    libssl-dev libboost-all-dev libgflags-dev libgmp-dev \
+    postgresql-server-dev-16 libpq-dev \
+    libomp-dev autoconf texinfo yasm \
+    # Runtime (PostgreSQL server)
+    postgresql-16 unzip curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# ---------- AWS CLI v2 ----------
+RUN curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscliv2.zip \
+    && unzip -q /tmp/awscliv2.zip -d /tmp \
+    && /tmp/aws/install \
+    && rm -rf /tmp/aws /tmp/awscliv2.zip
+
+# ---------- 1. EMP toolkit ----------
+WORKDIR /build/emp
+COPY deps/emp/install.sh .
+RUN bash install.sh && rm -rf /build/emp
+
+# ---------- 2. OpenFHE 1.4.2 (MATHBACKEND=4) ----------
+WORKDIR /build
+RUN git clone --depth 1 --branch v1.4.2 \
+    https://github.com/openfheorg/openfhe-development.git
+WORKDIR /build/openfhe-development/build
+RUN cmake .. -DMATHBACKEND=4 -DBUILD_SHARED=ON -DWITH_OPENMP=ON \
+             -DCMAKE_BUILD_TYPE=Release \
+             -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF \
+    && make -j$(nproc) && make install && ldconfig \
+    && rm -rf /build/openfhe-development
+
+# ---------- 3. libpqxx 7.7.4 (static with -fPIC) ----------
+WORKDIR /build
+RUN git clone --depth 1 --branch 7.7.4 https://github.com/jtv/libpqxx.git
+WORKDIR /build/libpqxx/build
+RUN cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TEST=OFF \
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+    && make -j$(nproc) && make install && ldconfig \
+    && rm -rf /build/libpqxx
+
+# ---------- Cleanup ----------
+RUN rm -rf /build
+
+# ---------- PostgreSQL config ----------
+RUN echo "local all all trust" > /etc/postgresql/16/main/pg_hba.conf \
+    && echo "host all all 0.0.0.0/0 trust" >> /etc/postgresql/16/main/pg_hba.conf \
+    && chown -R postgres:postgres /etc/postgresql/16/main/
+
+# ---------- vaultdb system user ----------
+RUN useradd -m -s /bin/bash vaultdb \
+    && echo "vaultdb ALL=(postgres) NOPASSWD: ALL" >> /etc/sudoers
+
+ENV LD_LIBRARY_PATH=/usr/local/lib
+ENV CMAKE_PREFIX_PATH=/usr/local/lib/OpenFHE
+WORKDIR /home/vaultdb

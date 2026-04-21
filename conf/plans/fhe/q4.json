@@ -1,0 +1,79 @@
+{
+    "rels": [
+      {
+        "id": "0",
+        "relOp": "FheTableScan",
+        "sql": "SELECT o_orderpriority, o_orderdate, l_commitdate, l_receiptdate FROM orders o JOIN lineitem l ON l.l_orderkey = o.o_orderkey WHERE l_commitdate < l_receiptdate ORDER BY o_orderpriority",
+        "groupByOrdinals": [
+          0
+        ],
+        "collation": [
+          {
+            "field": 0,
+            "direction": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "relOp": "FheFilter",
+        "predicates": [
+          {
+            "type": "greater_equal",
+            "column": "o_orderdate",
+            "threshold": "",
+            "radixBase": 4,
+            "numDigits": 6
+          },
+          {
+            "type": "less_than",
+            "column": "o_orderdate",
+            "threshold": "",
+            "radixBase": 4,
+            "numDigits": 6
+          }
+        ],
+        "inputs": [
+          "0"
+        ]
+      },
+      {
+        "id": "2",
+        "relOp": "FheAggregate",
+        "groupBy": [
+          0
+        ],
+        "aggregates": [
+          {
+            "type": "COUNT",
+            "alias": "order_count"
+          }
+        ],
+        "inputs": [
+          "1"
+        ]
+      },
+      {
+        "id": "3",
+        "relOp": "SecureContextSwitch",
+        "inputs": [
+          "2"
+        ],
+        "mpc_port": 8777,
+        "charlie_host": "127.0.0.1"
+      },
+      {
+        "id": "4",
+        "relOp": "LogicalSort",
+        "collation": [
+          {
+            "field": 0,
+            "direction": "ASCENDING"
+          }
+        ],
+        "inputs": [
+          "3"
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,36 @@
+{
+    "rels": [
+      {
+        "id": "0",
+        "relOp": "FheTableScan",
+        "sql": "SELECT l_returnflag, l_linestatus, l_quantity, l_extendedprice, l_discount, l_shipdate, l_extendedprice * (1 - l_discount) as disc_price, l_extendedprice * (1 - l_discount) * (1 + l_tax) as charge FROM lineitem ORDER BY (1), (2)",
+        "groupByOrdinals": [0, 1],
+        "collation": [
+          {"field": 0, "direction": "ASCENDING"},
+          {"field": 1, "direction": "ASCENDING"}
+        ]
+      },
+      {
+        "id": "1",
+        "relOp": "FheFilter",
+        "predicate": {
+          "type": "less_equal",
+          "column": "l_shipdate",
+          "threshold": "",
+          "radixBase": 4,
+          "numDigits": 6
+        },
+        "inputs": ["0"]
+      },
+      {
+        "id": "2",
+        "relOp": "FheAggregate",
+        "groupBy": [0, 1],
+        "aggregates": [
+          {"type": "SUM", "ordinal": 2, "alias": "sum_qty"}
+        ],
+        "inputs": ["1"]
+      }
+    ]
+  }
+  

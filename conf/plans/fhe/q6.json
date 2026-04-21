@@ -1,0 +1,77 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "FheTableScan",
+      "sql": "SELECT 1 as g, l_shipdate, l_discount, l_quantity, l_extendedprice, l_extendedprice * lineitem.l_discount as revenue FROM lineitem ORDER BY g",
+      "groupByOrdinals": [0],
+      "collation": [
+        {
+          "field": 0,
+          "direction": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "id": "1",
+      "relOp": "FheFilter",
+      "predicates": [
+        {
+          "type": "greater_equal",
+          "column": "l_shipdate",
+          "threshold": "",
+          "radixBase": 4,
+          "numDigits": 6
+        },
+        {
+          "type": "less_than",
+          "column": "l_shipdate",
+          "threshold": "",
+          "radixBase": 4,
+          "numDigits": 6
+        },
+        {
+          "type": "greater_equal",
+          "column": "l_discount",
+          "threshold": "",
+          "radixBase": 4,
+          "numDigits": 2
+        },
+        {
+          "type": "less_equal",
+          "column": "l_discount",
+          "threshold": "",
+          "radixBase": 4,
+          "numDigits": 2
+        },
+        {
+          "type": "less_than",
+          "column": "l_quantity",
+          "threshold": "",
+          "radixBase": 4,
+          "numDigits": 3
+        }
+      ],
+      "inputs": ["0"]
+    },
+    {
+      "id": "2",
+      "relOp": "FheAggregate",
+      "groupBy": [0],
+      "aggregates": [
+        {
+          "type": "SUM",
+          "ordinal": 5,
+          "alias": "revenue"
+        }
+      ],
+      "inputs": ["1"]
+    },
+    {
+      "id": "3",
+      "relOp": "FheProject",
+      "ordinals": [1],
+      "inputs": ["2"]
+    }
+  ]
+}

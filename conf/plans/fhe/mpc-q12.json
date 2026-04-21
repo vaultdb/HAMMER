@@ -1,0 +1,90 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "LogicalValues",
+      "outputFields": "l_shipmode (#0), l_receiptdate (#1), high_line_count (#2), low_line_count (#3)",
+      "type": [
+        {"type": "CHAR", "precision": 10, "name": "l_shipmode"},
+        {"type": "LONG", "nullable": false, "name": "l_receiptdate"},
+        {"type": "INTEGER", "nullable": false, "name": "high_line_count"},
+        {"type": "INTEGER", "nullable": false, "name": "low_line_count"}
+      ],
+      "sql": "SELECT l.l_shipmode, l.l_receiptdate, CASE WHEN o.o_orderpriority = '1-URGENT' OR o.o_orderpriority = '2-HIGH' THEN 1 ELSE 0 END AS high_line_count, CASE WHEN o.o_orderpriority <> '1-URGENT' AND o.o_orderpriority <> '2-HIGH' THEN 1 ELSE 0 END AS low_line_count FROM orders o, lineitem l WHERE o.o_orderkey = l.l_orderkey AND l.l_commitdate < l.l_receiptdate AND l.l_shipdate < l.l_commitdate ORDER BY l.l_shipmode",
+      "collation": [
+        {"field": 0, "direction": "ASCENDING"}
+      ],
+      "tuples": [],
+      "inputs": []
+    },
+    {
+      "id": "1",
+      "relOp": "LogicalFilter",
+      "condition": {
+        "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+        "operands": [
+          {
+            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+            "operands": [
+              {
+                "op": {"name": "OR", "kind": "OR", "syntax": "BINARY"},
+                "operands": [
+                  {
+                    "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                    "operands": [
+                      {"input": 0, "name": "$0"},
+                      {"literal": "MAIL", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                    ]
+                  },
+                  {
+                    "op": {"name": "=", "kind": "EQUALS", "syntax": "BINARY"},
+                    "operands": [
+                      {"input": 0, "name": "$0"},
+                      {"literal": "SHIP", "type": {"type": "CHAR", "precision": 10, "nullable": false}}
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                "operands": [
+                  {"input": 1, "name": "$1"},
+                  {"literal": 757382400, "type": {"type": "LONG", "nullable": false}}
+                ]
+              }
+            ]
+          },
+          {
+            "op": {"name": "<", "kind": "LESS_THAN", "syntax": "BINARY"},
+            "operands": [
+              {"input": 1, "name": "$1"},
+              {"literal": 788918400, "type": {"type": "LONG", "nullable": false}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "relOp": "LogicalAggregate",
+      "operator-algorithm": "sort-merge-aggregate",
+      "cardBound": 7,
+      "group": [0],
+      "effective-collation": [
+        {"field": 0, "direction": "ASCENDING", "nulls": "FIRST"}
+      ],
+      "aggs": [
+        {
+          "agg": {"name": "SUM", "kind": "SUM", "syntax": "FUNCTION"},
+          "type": {"type": "INTEGER", "nullable": true},
+          "distinct": false, "operands": [2], "name": "high_line_count"
+        },
+        {
+          "agg": {"name": "SUM", "kind": "SUM", "syntax": "FUNCTION"},
+          "type": {"type": "INTEGER", "nullable": true},
+          "distinct": false, "operands": [3], "name": "low_line_count"
+        }
+      ]
+    }
+  ]
+}

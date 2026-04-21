@@ -1,0 +1,50 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "FheTableScan",
+      "sql": "SELECT l_returnflag, l_linestatus, l_orderkey, l_shipdate FROM lineitem ORDER BY (1), (2)",
+      "groupByOrdinals": [0, 1],
+      "collation": [
+        { "field": 0, "direction": "ASCENDING" },
+        { "field": 1, "direction": "ASCENDING" }
+      ]
+    },
+    {
+      "id": "1",
+      "relOp": "FheFilter",
+      "predicate": {
+        "type": "less_equal",
+        "column": "l_shipdate",
+        "threshold": "",
+        "radixBase": 4,
+        "numDigits": 6
+      },
+      "inputs": ["0"]
+    },
+    {
+      "id": "2",
+      "relOp": "FheAggregate",
+      "groupBy": [0, 1],
+      "aggregates": [
+        { "type": "COUNT", "alias": "cnt" }
+      ],
+      "inputs": ["1"]
+    },
+    {
+      "id": "3",
+      "relOp": "SecureContextSwitch",
+      "inputs": ["2"],
+      "mpc_port": 8777,
+      "charlie_host": "127.0.0.1"
+    },
+    {
+      "id": "4",
+      "relOp": "LogicalSort",
+      "collation": [
+        { "field": 2, "direction": "DESCENDING", "nulls": "FIRST" }
+      ],
+      "inputs": ["3"]
+    }
+  ]
+}

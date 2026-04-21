@@ -1,0 +1,72 @@
+{
+    "rels": [
+      {
+        "id": "0",
+        "relOp": "FheTableScan",
+        "sql": "SELECT CAST(EXTRACT(YEAR FROM o.o_orderdate) AS INT) AS o_year, l.l_extendedprice * (1 - l.l_discount) AS volume, n2.n_name as n_nation, r.r_name, o.o_orderdate, p.p_type FROM part p JOIN lineitem l ON p.p_partkey = l.l_partkey JOIN supplier s ON s.s_suppkey = l.l_suppkey JOIN orders o ON l.l_orderkey = o.o_orderkey JOIN customer c ON o.o_custkey = c.c_custkey JOIN nation n1 ON c.c_nationkey = n1.n_nationkey JOIN region r ON n1.n_regionkey = r.r_regionkey JOIN nation n2 ON s.s_nationkey = n2.n_nationkey ORDER BY o_year",
+        "groupByOrdinals": [
+          0
+        ],
+        "collation": [
+          {
+            "field": 0,
+            "direction": "ASCENDING"
+          }
+        ]
+      },
+      {
+        "id": "1",
+        "relOp": "FheFilter",
+        "predicates": [
+          {
+            "type": "equal",
+            "column": "r_name",
+            "threshold": "",
+            "radixBase": 5,
+            "numDigits": 1
+          },
+          {
+            "type": "greater_equal",
+            "column": "o_orderdate",
+            "threshold": "",
+            "radixBase": 4,
+            "numDigits": 6
+          },
+          {
+            "type": "less_than",
+            "column": "o_orderdate",
+            "threshold": "",
+            "radixBase": 4,
+            "numDigits": 6
+          },
+          {
+            "type": "equal",
+            "column": "p_type",
+            "threshold": "",
+            "radixBase": 5,
+            "numDigits": 2
+          }
+        ],
+        "inputs": [
+          "0"
+        ]
+      },
+      {
+        "id": "2",
+        "relOp": "FheAggregate",
+        "groupBy": [
+          0
+        ],
+        "aggregates": [
+          {
+            "type": "SUM",
+            "ordinal": 1,
+            "alias": "volume"
+          }
+        ],
+        "inputs": [
+          "1"
+        ]
+      }
+    ]
+  }

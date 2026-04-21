@@ -1,0 +1,99 @@
+{
+  "rels": [
+    {
+      "id": "0",
+      "relOp": "LogicalValues",
+      "outputFields": "g (#0), l_shipdate (#1), l_discount (#2), l_quantity (#3), l_extendedprice (#4), revenue (#5)",
+      "type": [
+        {"type": "INTEGER", "nullable": false, "name": "g"},
+        {"type": "LONG", "nullable": false, "name": "l_shipdate"},
+        {"type": "DECIMAL", "name": "l_discount"},
+        {"type": "DECIMAL", "name": "l_quantity"},
+        {"type": "DECIMAL", "name": "l_extendedprice"},
+        {"type": "DECIMAL", "name": "revenue"}
+      ],
+      "sql": "SELECT 1 as g, l_shipdate, l_discount, l_quantity, l_extendedprice, l_extendedprice * l_discount as revenue FROM lineitem ORDER BY g",
+      "collation": [
+        {"field": 0, "direction": "ASCENDING"}
+      ],
+      "tuples": [],
+      "inputs": []
+    },
+    {
+      "id": "1",
+      "relOp": "LogicalFilter",
+      "condition": {
+        "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+        "operands": [
+          {
+            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+            "operands": [
+              {
+                "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+                "operands": [
+                  {
+                    "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                    "operands": [
+                      {"input": 1, "name": "$1"},
+                      {"literal": 757382400, "type": {"type": "LONG", "nullable": false}}
+                    ]
+                  },
+                  {
+                    "op": {"name": "<", "kind": "LESS_THAN", "syntax": "BINARY"},
+                    "operands": [
+                      {"input": 1, "name": "$1"},
+                      {"literal": 788918400, "type": {"type": "LONG", "nullable": false}}
+                    ]
+                  }
+                ]
+              },
+              {
+                "op": {"name": ">=", "kind": "GREATER_THAN_OR_EQUAL", "syntax": "BINARY"},
+                "operands": [
+                  {"input": 2, "name": "$2"},
+                  {"literal": 0.05, "type": {"type": "FLOAT", "nullable": false}}
+                ]
+              }
+            ]
+          },
+          {
+            "op": {"name": "AND", "kind": "AND", "syntax": "BINARY"},
+            "operands": [
+              {
+                "op": {"name": "<=", "kind": "LESS_THAN_OR_EQUAL", "syntax": "BINARY"},
+                "operands": [
+                  {"input": 2, "name": "$2"},
+                  {"literal": 0.07, "type": {"type": "FLOAT", "nullable": false}}
+                ]
+              },
+              {
+                "op": {"name": "<", "kind": "LESS_THAN", "syntax": "BINARY"},
+                "operands": [
+                  {"input": 3, "name": "$3"},
+                  {"literal": 24, "type": {"type": "FLOAT", "nullable": false}}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "relOp": "LogicalAggregate",
+      "operator-algorithm": "sort-merge-aggregate",
+      "cardBound": 1,
+      "group": [0],
+      "effective-collation": [
+        {"field": 0, "direction": "ASCENDING", "nulls": "FIRST"}
+      ],
+      "aggs": [
+        {
+          "agg": {"name": "SUM", "kind": "SUM", "syntax": "FUNCTION"},
+          "type": {"type": "DECIMAL", "nullable": true, "precision": 19, "scale": 0},
+          "distinct": false, "operands": [5], "name": "revenue"
+        }
+      ]
+    }
+  ]
+}
