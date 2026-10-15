@@ -159,8 +159,8 @@ void convertDateColumns(PlainColumnTable& table) {
             plain_input_->addColumn("dummy_tag", dummy_column);
         }
 
-        // Always create bin metadata if group-by ordinals are provided (for aggregate support)
-        if (!bin_group_by_ordinals_.empty()) {
+        // Create bin metadata for aggregate support. Empty group-by ordinals yield a single group.
+        if (bin_flag_) {
             // Create a copy of plain_input_ for bin metadata creation
             std::shared_ptr<PlainColumnTable> plain_copy = std::make_shared<PlainColumnTable>(*plain_input_);
             // Create FheColumnTable with plaintext data (no encryption yet)

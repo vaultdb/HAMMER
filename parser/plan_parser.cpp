@@ -1899,6 +1899,18 @@ Operator<void> *PlanParser<void>::parseFheAggregate(const int &operator_id, cons
         }
     }
     
+    // Scalar aggregate (no GROUP BY): have the underlying scan emit a single bin over all rows.
+    if (group_by_ordinals.empty()) {
+        ColumnOperator<void>* op = child_op;
+        while (op && op->getType() != OperatorType::FHE_SQL_INPUT) {
+            op = op->getChild(0);
+        }
+        if (!op) {
+            throw std::runtime_error("FheAggregate: no FheTableScan found below scalar aggregate");
+        }
+        static_cast<FheSqlInput*>(op)->enableSingleGroupBin();
+    }
+
     FheAggregate* fhe_agg = new FheAggregate(child_op, aggregates, group_by_ordinals);
     fhe_agg->setOperatorId(operator_id);
     return reinterpret_cast<Operator<void>*>(fhe_agg);

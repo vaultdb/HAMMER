@@ -3,14 +3,7 @@
     {
       "id": "0",
       "relOp": "FheTableScan",
-      "sql": "SELECT 1 as g, l_shipdate, l_discount, l_quantity, l_extendedprice, l_extendedprice * lineitem.l_discount as revenue FROM lineitem ORDER BY g",
-      "groupByOrdinals": [0],
-      "collation": [
-        {
-          "field": 0,
-          "direction": "ASCENDING"
-        }
-      ]
+      "sql": "SELECT l_shipdate, l_discount, l_quantity, l_extendedprice, l_extendedprice * lineitem.l_discount as revenue FROM lineitem"
     },
     {
       "id": "1",
@@ -57,11 +50,11 @@
     {
       "id": "2",
       "relOp": "FheAggregate",
-      "groupBy": [0],
+      "groupBy": [],
       "aggregates": [
         {
           "type": "SUM",
-          "ordinal": 5,
+          "ordinal": 4,
           "alias": "revenue"
         }
       ],
@@ -70,7 +63,7 @@
     {
       "id": "3",
       "relOp": "FheProject",
-      "ordinals": [1],
+      "ordinals": [0],
       "inputs": ["2"]
     }
   ]

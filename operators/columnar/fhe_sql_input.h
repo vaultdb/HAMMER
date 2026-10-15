@@ -50,6 +50,8 @@ namespace vaultdb {
         const QuerySchema& getOutputSchema() const { return this->output_schema_; } // Ensure using base's member
         size_t getOutputCardinality() const { return output_cardinality_; }
         bool getBinFlag() const { return bin_flag_; }
+        // Scalar aggregate (no GROUP BY): whole input becomes a single bin.
+        void enableSingleGroupBin() { bin_flag_ = true; bin_group_by_ordinals_.clear(); }
         const std::vector<int32_t>& getBinGroupByOrdinals() const { return bin_group_by_ordinals_; }
     };
 
